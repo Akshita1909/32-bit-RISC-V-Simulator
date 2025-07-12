@@ -1,22 +1,23 @@
-class IAG:
-    def __init__(self, PC):
-        self.PC = PC
-        self.PCSrc = -1     ## 0 for incrementing 4         ## 1 for branch / jump instructions  ## 2 for jalr
+class InstructionAddressGenerator:
+    def __init__(self, initial_pc):
+        self.program_counter = initial_pc
+        # PC source: 0 = PC + 4 (sequential), 1 = branch/jump, 2 = register (e.g., jalr)
+        self.pc_source = -1
 
-    def update(self, branch_target, register_target):
-        print("\tUpdating PC")
-        if self.PCSrc == 0:
-            print("\tMoved to next sequential instruction")
+    def update_pc(self, immediate_target, reg_target):
+        print("\n[PC Update]")
+        if self.pc_source == 0:
+            print("→ Proceeding to next instruction (PC + 4).")
             return False
-        elif self.PCSrc == 1:
-            self.PC = branch_target
-            print("\tJumped to offset provided by immediate")
+        elif self.pc_source == 1:
+            self.program_counter = immediate_target
+            print(f"→ Jump to immediate offset: PC ← {hex(self.program_counter)}")
             return True
-        elif self.PCSrc == 2:
-            self.PC = register_target
-            print("\tJumped to register value")
+        elif self.pc_source == 2:
+            self.program_counter = reg_target
+            print(f"→ Jump to register-based address: PC ← {hex(self.program_counter)}")
             return True
-        print(f"\tPC: {self.PC}")
-# 0 F(0|4)
-# 4 F(4|8) D(0|0+4)
-#
+
+        # Fallback if pc_source is undefined
+        print(f"→ Current PC unchanged: {hex(self.program_counter)}")
+        return False
