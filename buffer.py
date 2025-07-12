@@ -1,31 +1,31 @@
 """
+Buffer Utility for Pipeline Stages
 
-    buffer module
-    
+This module defines a flexible buffer class used to pass data
+between CPU pipeline stages, allowing both key-based and attribute-based access.
 """
 
-class buffer(dict):
-    def __getattr__(self, attr):
-        return self.get(attr)
+class PipelineBuffer(dict):
+    def __getattr__(self, name):
+        return self.get(name)
 
-    def __setattr__(self, key, value):
-        self.__setitem__(key, value)
+    def __setattr__(self, name, value):
+        self[name] = value
 
-    def __setitem__(self, key, value):
-        super(buffer, self).__setitem__(key, value)
-        self.__dict__.update({key: value})
+    def __setitem__(self, name, value):
+        super().__setitem__(name, value)
+        self.__dict__[name] = value
 
-    def __delattr__(self, item):
-        self.__delitem__(item)
+    def __delattr__(self, name):
+        self.__delitem__(name)
 
-    def __delitem__(self, key):
-        super(buffer, self).__delitem__(key)
-        del self.__dict__[key]
+    def __delitem__(self, name):
+        super().__delitem__(name)
+        self.__dict__.pop(name, None)
 
+# Example usage for different pipeline stages:
+# fetch_decode = PipelineBuffer()   # Between Fetch and Decode
+# decode_execute = PipelineBuffer() # Between Decode and Execute
+# execute_memory = PipelineBuffer() # Between Execute and Memory
+# memory_writeback = PipelineBuffer() # Between Memory and Writeback
 
-# sample buffer objects
-
-#if_id_buffer = buffer_module() # buffer between instruction fetch stage and instruction decode stage
-#id_ex_buffer = buffer_module()
-#ex_mem_buffer = buffer_module()
-#mem_wb_buffer = buffer_module()
